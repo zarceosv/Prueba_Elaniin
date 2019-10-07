@@ -1,0 +1,125 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_editar">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title">Editar información</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal_body">
+                <div class="alert alert-danger alert_2" role="alert" style="display: none;">
+                    El nombre de usuario ya se encuentra en uso
+                </div>
+                <form class="post-form" id="form_editar">
+                    {% csrf_token %}
+                    <input type="hidden" id="persona_id_editar" name="persona_id_editar">
+                    <div class="form-group row">
+                        <label for="txt_nombre_editar" class="col-sm-3 col-form-label">Nombre</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="txt_nombre_editar" name="txt_nombre_editar" placeholder="Nombre" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="txt_apellido_editar" class="col-sm-3 col-form-label">Apellido</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="txt_apellido_editar" name="txt_apellido_editar" placeholder="Apellido">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="txt_nombre_usuario_editar" class="col-sm-3 col-form-label">Nombre de usuario</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="txt_nombre_usuario_editar" name="txt_nombre_usuario_editar" placeholder="Nombre de usuario"  required>
+                        </div>
+                    </div>
+                    <fieldset class="form-group">
+                        <div class="row">
+                            <legend class="col-form-label col-sm-3 pt-0">Sexo</legend>
+                            <div class="col-sm-9">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="sexo_editar" id="rd_masculino_editar" value="M" checked   >
+                                    <label class="form-check-label" for="rd_masculino_editar">
+                                        Masculino
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="sexo_editar" id="rd_femenino_editar" value="F">
+                                    <label class="form-check-label" for="rd_femenino_editar">
+                                        Femenino
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group row">
+                        <div class="col-sm-3">Activo</div>
+                        <div class="col-sm-9">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chk_activo_editar" name="chk_activo_editar">
+                                <label class="form-check-label" for="chk_activo_editar">
+                                    Activo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <fieldset class="form-group"></fieldset>
+                    <div class="row">
+                        <legend class="col-form-label col-sm-3 pt-0">Rol</legend>
+                        <div class="col-sm-9">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="rd_administrador_editar" name="rol_editar" value="ADM">
+                                <label class="form-check-label" for="rd_administrador_editar">
+                                    Administrador
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="rd_usuario_editar" name="rol_editar" value="USR">
+                                <label class="form-check-label" for="rd_usuario_editar">
+                                    Usuario
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="btn_guardar_editar" data-toggle="modal" data-target="#modal_editar">Guardar cambios</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block addJavascripts %}
+<script type="text/javascript">
+
+$('#form_editar input').on('change invalid', function() {
+        var inputText = $(this).get(0);
+        inputText.setCustomValidity('');
+        if (!inputText.validity.valid) {
+          inputText.setCustomValidity('Este campo es requerido');  
+        }
+    });
+
+$('#form_editar').submit(function(){
+    event.preventDefault();
+    jQuery.ajax({
+        url: "{% url 'guadarCambios' %}",
+        type: "POST",
+        data: $( this ).serialize(),
+        success: function(json){
+            if(json == 'True'){
+                actualizarListaUsuario();
+            }else{
+                $('.alert_2').show();
+            }
+        }
+    })
+    
+})
+
+
+</script>
+{% endblock %}

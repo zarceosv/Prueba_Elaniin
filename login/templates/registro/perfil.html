@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+
+{% block addExtraStyle %}
+	
+{% block title %}
+	Login
+{% endblock %}
+
+{% block pagetitle %}
+	Login
+{% endblock %}
+
+{% endblock %}
+{% block content %}
+
+{% load static %}
+{% csrf_token %}
+
+<div class="page-content">
+	<div class="page-header">
+		<h1>Perfil</h1>
+		<hr>
+	</div>
+	<div class="row">
+		<div class="col-sm-3" style="">
+			<div class="container">
+				<div class="">
+					<div class="">
+						<div class="row">
+							<div class="col-sm-12">
+								<span class="profile-picture">
+									<center>
+										<img id="img_avatar" class="img-fluid" src="">
+									</center>
+								</span>
+							</div>
+							<div class="col-sm-12 form-group">
+								<div class="input-group">
+									<form method="post" id="form_img"  enctype="multipart/form-data" action="{%url 'guardarImagen' %}">
+										{% csrf_token %}
+										<input type="hidden" name="persona_id_perfil"  id="persona_id_imagen" >
+										<div class="custom-file">
+										    <input type="file" class="custom-file-input" name="validatedCustomFile" id="validatedCustomFile" accept="image/*" required>
+										    <label class="custom-file-label" for="validatedCustomFile" aria-describedby="inputGroupFileAddon01">Buscar archivos</label>
+										</div>
+										<div class="">
+											<button type="" id="btn_submit_img" class="btn btn-primary">
+												Guardar imagen
+											</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>			
+		</div>
+		<div class="col-sm-9">
+			<div class="container">
+				<div class="card">
+					<div class="card-header">
+						Detalles del perfil
+					</div>
+					<div class="card-body">
+						<div class="alert alert-danger alert_1" role="alert" style="display: none;">
+                    		La contraseña ingresada no es correcta
+                		</div>		
+						<form method="post" onsubmit="return validarContraNueva()" action="{%url 'guardarCambiosPerfil' %}" class="post-form" id="form_perfil">
+							{% csrf_token %}
+							<input type="hidden" name="persona_id_perfil"  id="persona_id_perfil" >
+						  <div class="form-group row">
+						    <label for="txt_nombre" class="col-sm-3 col-form-label">Nombre</label>
+						    <div class="col-sm-9">
+						      <input type="text" class="form-control" id="txt_nombre" name="txt_nombre" placeholder="Nombre">
+						    </div>
+						  </div>
+						  <div class="form-group row">
+						    <label for="txt_apellido" class="col-sm-3 col-form-label">Apellido</label>
+						    <div class="col-sm-9">
+						      <input type="text" class="form-control" id="txt_apellido" name="txt_apellido" placeholder="Apellido">
+						    </div>
+						  </div>
+						  
+						  <fieldset class="form-group">
+						    <div class="row">
+						      <legend class="col-form-label col-sm-3 pt-0">Sexo</legend>
+						      <div class="col-sm-9">
+						        <div class="form-check">
+						          <input class="form-check-input" type="radio" name="rd_sexo" id="rd_masculino" value="M" checked	>
+						          <label class="form-check-label" for="rd_masculino">
+						            Masculino
+						          </label>
+						        </div>
+						        <div class="form-check">
+						          <input class="form-check-input" type="radio" name="rd_sexo" id="rd_femenino" value="F">
+						          <label class="form-check-label" for="rd_femenino">
+						            Femenino
+						          </label>
+						        </div>
+						      </div>
+						    </div>
+						  </fieldset>
+						   <div class="form-group row">
+		                        <div class="col-sm-3">Activo</div>
+		                        <div class="col-sm-9">
+		                            <div class="form-check">
+		                                <input class="form-check-input" type="checkbox" id="chk_activo" name="chk_activo">
+		                                <label class="form-check-label" for="chk_activo">
+		                                    Activo
+		                                </label>
+		                            </div>
+		                        </div>
+                    		</div>
+                    		<div class="form-group row">
+                    			<div class="col-sm-3">Cambiar contraseña</div>
+                    			<div class="col-sm-9">
+                    				<div class="form-check">
+		                                <input class="form-check-input" type="checkbox" id="chk_contra_nueva" name="chk_contra_nueva">
+		                                <label class="form-check-label" for="chk_contra_nueva">
+		                                    Si, cambiar contraseña
+		                                </label>
+		                            </div>
+		                            <div class="alert alert-danger" id="error_contra_nueva" rol="alert" style="display: none;">
+										<p>Estos campos deben ser iguales</p>
+									</div>
+                    				<div name="div_contra_nueva" style="display: none;">
+                    					<input type="password" class="form-control" name="txt_contra_nueva" placeholder="Ingrese nueva contraseña">
+                    				</div>
+                    				<div name="div_contra_nueva" style="display: none;">
+                    					<input type="password" class="form-control" name="txt_contra_nueva_repetir" placeholder="Repetir nueva contraseña">
+                    				</div>
+                    			</div>
+                    		</div>
+                    		<div class="form-group row">
+						    	<label for="txt_contra" class="col-sm-3 col-form-label">Contraseña</label>
+						    	<div class="col-sm-9">
+						      		<input type="password" class="form-control" id="txt_contra" name="txt_contra" placeholder="Ingrese contraseña para generar cambios" required="">
+						    	</div>
+						  	</div>
+                    	{% if persona_rol %}
+						  <div class="form-group row">
+						    <div class="col-sm-3">Administrador</div>
+						    <div class="col-sm-9">
+						      <div class="form-check">
+						        <input class="form-check-input" type="checkbox" id="chk_administrador" name="chk_administrador">
+						        <label class="form-check-label" for="chk_administrador">
+						          Administrador
+						        </label>
+						      </div>
+						    </div>
+						  </div>
+						 {% endif %}
+						  <div class="form-group row justify-content-md-center ">
+						    <div class="col-sm-4">
+						      <button type="submit" class="btn btn-primary" id="btn_guardar_cambios">Guardar Cambios</button>
+						      <button type="button" class="btn btn-secundary" id="btn_cancelar">Cancelar</button>
+
+						    </div>
+						  </div>
+						</form>
+					</div>
+				</div>
+			</div>
+				
+		</div>
+	</div>
+	<br>
+	<br>
+	{% if persona_rol %}
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="container">
+				<div class="card">
+					<div class="card-header">
+						<div class="row">
+							<div class="col-sm-9">Lista de usuarios</div>
+							<div class="col-sm-3">
+								<button type="button" id="btn_agregar_nuevo" class="btn btn-primary" data-toggle="modal" data-target="#modal_nuevo_usuario">Agregar nuevo usuario</button>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<table class="table table-striper" id="t-body">
+							<tr>
+								<th hidden>Persona ID</th>
+								<th>Nombre/s</th>
+								<th>Apellido/s</th>
+								<th>Nombre de usuario</th>
+								<th>Sexo</th>
+								<th>Rol en el sistema</th>
+								<th>Activo</th>
+								<th>Acciones</th>
+
+								{% for p in persona %}
+								<tr id="">
+									<td hidden>
+										{{p.persona_id}}
+									</td>
+									<td>
+										{{p.nombre|safe}}
+									</td>
+									<td>
+										{{p.apellido|safe}}
+									</td>
+									<td>
+										{{p.usuario.nombre_usuario|safe}}
+									</td>
+									<td>
+										{{p.get_sexo_display|safe}}
+									</td>
+									<td>
+										{{p.usuario.rol.nombre|safe}}
+									</td>
+									<td>
+										{% if p.activo == True%}
+											<input type="checkbox" class="form-check" disabled name="chk_activo" checked>
+										{% else %}
+											<input type="checkbox" class="form-check" disabled name="chk_activo">
+										{% endif %}
+									</td>
+									<td>
+										{{acciones|safe}}
+									</td>
+								</tr>
+								{% endfor %}
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div>
+
+{% include "registro/modalconfirmacion.html" %}
+{% include "registro/modaleditar.html" %}
+{% include "registro/modalnuevousuario.html" %}
+
+{% block addJavascripts %}
+{{block.super}}
+<script type="text/javascript">
+var persona_id = ""
+$(window).ready(function(){
+	$(".custom-file-input").on("change", function() {
+  		var fileName = $(this).val().split("\\").pop();
+  		$(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+	});
+
+	infoEmpleadoLog();
+});
+
+function validarContraNueva(){
+	if($('[name="txt_contra_nueva"]').val() === $('[name="txt_contra_nueva_repetir"]').val()){
+		;
+	}else{
+		$('#error_contra_nueva').show()
+		setTimeout(function(){ $('#error_contra_nueva').hide('slow'); }, 1500);
+		return false
+	}
+}
+
+
+$('#chk_contra_nueva').on('change', function(){
+	if($(this)[0].checked == true ){
+		$('[name="div_contra_nueva"]').show()
+
+	}else{
+		$('[name="txt_contra_nueva"]').val('')
+		$('[name="txt_contra_nueva_repetir"]').val('')
+		$('[name="div_contra_nueva"]').hide()
+
+	}
+})
+
+$('#form_perfil input').on('change invalid', function() {
+        var inputText = $(this).get(0);
+        inputText.setCustomValidity('');
+        if (!inputText.validity.valid) {
+          inputText.setCustomValidity('Este campo es requerido');  
+        }
+    });
+
+
+$('#btn_cancelar').on('click', function(){
+	location.reload(true);
+
+	//infoEmpleadoLog();
+});
+
+
+function editarUsuario(row){
+	$('.alert').hide()
+	jQuery.ajax({
+            url: "{% url 'editarUsuario' %}",
+            type: "POST",
+            data: {csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val(),
+                    persona_id: $.trim($(row).parent().parent().first().children().html())
+                },
+            success: function(json){
+                //$('#modal_confirmacion').modal('hide')//podria no ir
+                $('#persona_id_editar').val(json['persona_id'])
+                $('#txt_nombre_editar').val(json['nombre'])
+                $('#txt_apellido_editar').val(json['apellido'])
+                $('#txt_nombre_usuario_editar').val(json['usuario__nombre_usuario'])
+                if(json['sexo'] == 'M'){
+                	$('#rd_masculino_editar').prop('checked', true)
+                }else{
+                	$('#rd_femenino_editar').prop('checked', true)
+                }
+                if(json['activo']){
+                	$('#chk_activo_editar').prop('checked', true)
+                }
+                else{
+                	$('#chk_activo_editar').prop('checked', false)
+                }
+                if(json['usuario__rol__abreviatura'] == 'ADM'){
+                	$('#rd_administrador_editar').prop('checked', true)
+                }else{
+                	$('#rd_usuario_editar').prop('checked', true)
+                }
+                
+
+            }
+        });
+
+}
+
+function inactivarUsuario(row){
+	$('#persona_id').val($.trim($(row).parent().parent().first().children().html()))
+	$('#modal_body').html('<p>Esta seguro de <strong>inactivar</strong> al usuario</p>');
+}
+
+function eliminarUsuario(row) {
+	$('#persona_id').val($.trim($(row).parent().parent().first().children().html()))
+	$('#modal_body').html('<p>Esta seguro de <strong>eliminar</strong> al usuario</p>');
+}
+
+
+
+function infoEmpleadoLog(){
+	$('#persona_id_imagen').val("{{persona_id}}")
+	$('#persona_id_perfil').val("{{persona_id}}")
+	$('#txt_nombre').val("{{persona_nombre}}");
+	$('#txt_apellido').val("{{persona_apellido}}");
+	if("{{persona_sexo}}" == 'F'){
+		$('#rd_femenino').prop('checked', true)
+	}else{
+		$('#rd_masculino').prop('checked', true)
+	}
+
+	if("{{persona_activo}}" == 'True'){
+		$('#chk_activo').prop('checked', true);
+	}
+
+	if("{{persona_rol}}" == 'True'){
+		$('#chk_administrador').prop('checked', true);
+	}
+	if("{{persona_foto}}" == ''){
+		$("#img_avatar").attr("src","/{{ MEDIA_URL  }}"+"fotos/sin_foto.png");
+	}else{
+		$("#img_avatar").attr("src","/{{ MEDIA_URL }}"+"{{persona_foto}}");
+	}
+}
+
+function actualizarListaUsuario(){
+	jQuery.ajax({
+        url: "{% url 'actualizarListaUsuario' %}",
+        type: "POST",
+        data: {csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val(),
+        		persona_id_perfil: $('#persona_id_perfil').val()
+            },
+        success: function(json){
+        	var html = '<tr>\
+        					<th hidden>Persona ID</th>\
+							<th>Nombre/s</th>\
+							<th>Apellido/s</th>\
+							<th>Nombre de usuario</th>\
+							<th>Sexo</th>\
+							<th>Rol en el sistema</th>\
+							<th>Activo</th>\
+							<th>Acciones</th>';
+        	json.personas.forEach(function(p){
+        		p.sexo = p.sexo == 'M' ? 'Masculino' : 'Femenino'
+        		html += '<tr>\
+							<td hidden>'+
+								p.persona_id+
+							'</td>\
+							<td>'+
+								p.nombre+
+							'</td>\
+							<td>'+
+								p.apellido+
+							'</td>\
+							<td>'+
+								p.usuario__nombre_usuario+
+							'</td>\
+							<td>'+
+								p.sexo+
+							'</td>\
+							<td>'+
+								p.usuario__rol__nombre+
+							'</td>\
+							<td>'
+				if(p.activo == true){
+					html += '<input type="checkbox" class="form-check" disabled name="chk_activo" checked=true>'
+				}
+				else{
+					html += '<input type="checkbox" class="form-check" disabled name="chk_activo">'
+				}
+				html += '</td>\
+							<td>'+
+								json.acciones+
+							'</td>\
+						</tr>\
+					</tr>'
+        	})
+        	$('#t-body').html(html)
+
+        }
+    });
+
+}
+</script>
+
+{% endblock %}
+{% endblock %}

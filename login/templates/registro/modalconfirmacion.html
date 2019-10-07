@@ -1,0 +1,55 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="modal_confirmacion">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <input type="hidden" id="persona_id">
+                <h5 class="modal-title">Confirmacion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal_body">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn_guardar_accion">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block addJavascripts %}
+<script type="text/javascript">
+$('#btn_guardar_accion').on('click', function(){
+    if($('#modal_body:contains("inactivar")').length > 0){
+        jQuery.ajax({
+            url: "{% url 'inactivarUsuario' %}",
+            type: "POST",
+            data: {csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val(),
+                    persona_id: $('#persona_id').val(),
+                },
+            success: function(json){
+                //$('#modal_confirmacion').modal('hide')//podria no ir
+                location.reload(true)
+            }
+        });
+    }else{
+        jQuery.ajax({
+            url: "{% url 'eliminarUsuario' %}",
+            type: "POST",
+            data: {csrfmiddlewaretoken: $("[name=csrfmiddlewaretoken]").val(),
+                    persona_id: $('#persona_id').val(),
+                },
+            success: function(json){
+                //$('#modal_confirmacion').modal('hide')//podria no ir
+                location.reload(true)
+            }
+        });
+
+    
+    }
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block addExtraStyle %}
+	
+{% block title %}
+	Login
+{% endblock %}
+
+{% block pagetitle %}
+	Login
+{% endblock %}
+
+{% endblock %}
+{% block content %}
+
+<div class="container" style="width: 35%;" >
+	<br>
+	<br>
+	
+	<div class="card box-shadow">
+		<div class="card-header text-center">Inicio de sesión</div>
+		<div class="card-body">
+			{%if error %}
+				<div class="alert alert-danger" rol="alert">
+					<p>El usuario y/o la contraseña es incorrecta</p>
+				</div>
+			{%endif%}
+			<form method="post" action="{%url  'loginUsuario' %}" class="post-form" id="form_login">
+				{% csrf_token %}
+				<div class="form-group">
+				    <label>Usuario</label>
+					<input type="text" class="form-control" name="txt_usuario" placeholder="Escriba nombre de usuario" data-toggle="tooltip" data-placement="top" title="Usuario es requerido" required>
+					<label>Contraseña</label>
+					<input type="password" class="form-control" name="txt_contra" placeholder="Escriba su contraseña" data-toggle="tooltip" data-placement="top" title="Contraseña es requerido" required title="">
+				</div>
+				<button type="submit" class="btn btn-success">Inicio de sesion</button>
+				<p class="text-right">
+					<a href="" class="">
+						<small class="text-muted">Recuperar contraseña</small>
+					</a>
+				</p>
+			</form>
+		</div>
+	</div>
+		  
+	 
+ </div>
+
+{% block addJavascripts %}
+<script type="text/javascript">
+
+$(window).ready(function(){
+});
+	$('#form_login input').on('change invalid', function() {
+	    var inputText = $(this).get(0);
+	    inputText.setCustomValidity('');
+	    if (!inputText.validity.valid) {
+	      inputText.setCustomValidity('Este campo es requerido');  
+	    }
+	});
+	
+
+</script>
+{% endblock %}
+{% endblock %}
